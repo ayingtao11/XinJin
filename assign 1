@@ -1,9 +1,82 @@
 /* Class: CISC 3130
- * Section: MY9, TY2, TY9
- * EmplId:
- * Name: Professor Katherine Chuang
+ * Section: TY2
+ * EmplId: 23825107
+ * Name: XinJin Weng
  */
  
  //imports
  import java.util.*;
- 
+ import java.io.File;
+
+ class assign1{
+   //main method initializes arrays and variables, calls other methods, and prints out the result
+   //I only read in the first 32 lines or 30 songs from the site in order to make it easier
+   //problem: although scanner does work in drjava in my pc, I'm not sure if this will work in other places.
+   public static void main(String[]args) throws Exception{
+     File test = new File("C:\\Users\\owner\\Desktop\\Java Source\\regional-global-weekly-2020-01-17--2020-01-24.csv");
+     Scanner sc = new Scanner(test);
+     String[] list = new String[32];
+     String[][] str = new String[32][5];
+     String[] artists = new String[30];
+     int n = read(sc,list,str,artists);
+     sort(n,artists);
+     int[] appears = new int[n];
+     count(n,str,artists,appears);
+      for(int i=0;i<n;i++){
+       System.out.print(artists[i]);
+       System.out.println(" , appears: "+appears[i]);
+     }
+      sc.close();
+   }
+   //read method reads the file,rearranges the array to eliminate repetition and returns the total number of artists
+   public static int read(Scanner sc, String[] list, String[][]str,String[]artists){
+     int line = 0;
+     while(sc.hasNext()&&line<32){
+       list[line] = sc.nextLine().replaceAll("\"","");
+       str[line] = list[line].split(",");
+       line++;
+     }
+     int n = 0;
+     boolean same = false;
+     String temp = "";
+     artists[n] = str[2][2];
+     for(int i=3;i<32;i++){
+       temp = str[i][2];
+       for(int j=i;j>2;j--){
+         if (temp.equals(str[j-1][2]))
+           same = true;
+       }
+       if(same == false){
+         artists[n+1] = temp;
+         n++;
+       }
+       same = false;
+     }
+     return n;
+   }
+   //sort method sorts the array in alphabetical order by bubble sort
+   public static void sort(int n,String[]artists){
+     String temp;
+     int pass=0;
+     boolean swapped;
+     do{
+       pass++;
+       swapped=false;
+       for (int p=0;p<n-pass;p++){
+         if (artists[p].compareTo(artists[p+1])>0){
+           temp=artists[p+1];
+           artists[p+1]=artists[p];
+           artists[p]=temp;
+           swapped=true;
+         }
+       }
+     }while(swapped==true);
+   }
+   //count method counts how many times each artist appears
+   public static void count(int n,String[][]str,String[]artists,int[]appears){
+     for(int i=0;i<n;i++)
+       for(int j=2;j<32;j++)
+         if(artists[i].compareTo(str[j][2])==0)
+           appears[i]++;
+   }
+ }
