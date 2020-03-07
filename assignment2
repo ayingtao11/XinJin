@@ -1,0 +1,174 @@
+/* Class: CISC 3130
+ * Section: TY2
+ * EmplId: 23825107
+ * Name: XinJin Weng
+ */
+ 
+/*  Description
+ * Main class that has main method,I tried to use it as demo; it calls all of other classes
+ * to check if the programming is working.
+ * However my drJava in my pc cannot read file directly, it shows:
+ * java.io.FileNotFoundException: regional-global-weekly-2020-02-07--2020-02-14 (The system cannot find the file specified)
+ * even i downloaded the lists from the website as you told me in class.
+ * Both of scanner and bufferedreader do not work
+ * I fixed all compiler errors but I'm not sure if it can run.
+ */
+
+//imports
+import java.util.*;
+import java.io.*;
+class assign2{
+  //main method calls all of other methods. I tried to use System.out.println to show the work
+  //however my program cannot read the file directly.
+  public static void main(String[] args) throws Exception{
+    MyApp m = new MyApp();
+    ArrayList<MyQueue> test = new ArrayList<MyQueue>();
+    for (int i=0;i<test.size()-1;i++){
+      MyQueue test2 = test.get(i);
+      for (int j=0;j<test.get(i).size()-1;j++)
+        System.out.println(test2.getList().get(j));
+    }
+    MyQueue merged = m.mergingFunction(test.get(0),test.get(1));
+    for (int j=0;j<merged.size()-1;j++)
+        System.out.println(merged.getList().get(j));
+    Playlist p = new Playlist();
+    p.addSong(new Song(merged.getList().get(0)));
+    p.addSong(new Song(merged.getList().get(1)));
+    System.out.println(p.listenToSong());
+    p.remove();
+    SongHistoryList h = new SongHistoryList();
+    System.out.println(h.lastListened());
+  }
+}
+//this method reads files and converts into the lists, called by MyApp method
+class MyQueue{
+  private LinkedList<String> o;
+  private int nItems;
+  public MyQueue(){ o.add(null);}
+  //constructor,read files by scanner, also counts the number of Strings 
+  public MyQueue(String fileName)throws Exception{
+    nItems = 0;
+    File f = new File(fileName);
+    Scanner sc = new Scanner(f);
+    o = new LinkedList<String>();
+    while(sc.hasNext()&&nItems<30){
+    o.add(sc.nextLine());
+    nItems++;
+    }
+  }
+  //add String to the list, useful in mergingsort
+  public void insert(String s){
+    o.add(s);
+    nItems++;
+  }
+  //return the list so I can use it to get and modify the Strings
+  public LinkedList<String> getList(){
+    return o;
+  }
+  //return list size
+  public int size(){
+    return nItems;
+  }
+}
+//this method constructs lists and calls  MyQueue method that reads files and converts into the lists.
+class MyApp{
+  private ArrayList<MyQueue> all;
+  //constructor
+  public MyApp()throws Exception{
+  String[] files = {"regional-global-weekly-2020-02-07--2020-02-14", "regional-global-weekly-2020-02-14--2020-02-21", 
+    "regional-global-weekly-2020-02-21--2020-02-28", "regional-global-weekly-latest"};
+  all = new ArrayList<MyQueue>();
+  MyQueue dataExtract;
+  for (int i=0;i<files.length-1;i++){
+    dataExtract = new MyQueue(files[i]);
+    all.add(dataExtract);
+    }
+  }
+  //return the list, so i can get and modify the lists of MyQueue class
+  public ArrayList<MyQueue> getAll(){
+    return this.all;
+  }
+  //merge and sort two lists into in alphebatical order, return the merged list
+  //uses compareto to compare the Strings, the one that is shown in class
+  public MyQueue mergingFunction(MyQueue q1, MyQueue q2){
+    MyQueue merged = new MyQueue();
+    int i=0,j=0,k=0;
+    while (i<q1.size()&&j<q2.size()){
+      if (q1.getList().get(i).compareTo(q2.getList().get(j))<0){
+        merged.insert(q1.getList().get(i));
+        i++;
+        k++;
+      }
+      else{
+        merged.insert(q2.getList().get(j));
+        j++;
+        k++;
+      }
+      while(i<q1.size()){merged.insert(q1.getList().get(i));i++;k++;}
+      while(j<q2.size()){merged.insert(q2.getList().get(j));j++;k++;}
+      return merged;
+    }
+    return merged;
+  }
+}
+//the class that stores Song information in String
+//do not know what do variable track and next actually do
+//it seems like I can avoid using both of them
+class Song{
+  private String track;
+  private Song next;
+  public Song(String s){
+    track = s;
+    next = new Song(s);
+  }
+}
+//this class is the playlist of the song(Strings) in reads in
+//It adds songs, return(listen)the song, and remove the song from to the list
+//do not know if I use the variable first right
+class Playlist {
+  private Song first;
+  private LinkedList<Song> n;
+  //constructor
+  public Playlist(){
+    n = new LinkedList<Song>();
+  }
+  //it adds song to the playlist, and memerize the cunrrent song
+  public void addSong(Song s){
+    n.add(s);
+    first = s;
+  }
+  //it return(listen)the song
+  public Song listenToSong(){
+    return first;
+  }
+  // it removes the song from playlist and restores it into SongHistoryList class
+  public void remove(){
+  SongHistoryList l = new SongHistoryList();
+  l.addSong(n.remove());
+  }
+}
+//this class stores the song that is removed from the list
+class SongHistoryList {
+  private Song first;
+  private LinkedList<Song>h;
+  //constructor
+  public SongHistoryList(){
+    h = new LinkedList<Song>();
+  }
+  //it adds the removed song into SongHistoryList class
+  public void addSong(Song s){
+    h.add(s);
+    first=s;
+  }
+  //it retrieves the last (most recent) song that is the removed from the playlist into SongHistoryList class
+  public Song lastListened(){
+    return first;
+  }
+}
+/*  Output:
+ * I did see any requirement about output for this assignment and my Output shows Exception:
+ * java.io.FileNotFoundException: regional-global-weekly-2020-02-07--2020-02-14 (The system cannot find the file specified)
+ * I think it is because drJava cannot read file directly, even i downloaded it from the website as you told me in class.
+ * Both of scanner and bufferedreader do not work
+ * I fixed all compiler errors but I'm not sure if it can run.
+ */
