@@ -1,0 +1,237 @@
+/* Class: CISC 3130
+ * Section: TY2
+ * EmplId: 23825107
+ * Name: XinJin Weng
+ */
+ 
+/*  Description
+ * What I intend to do:
+ * I tried to read in Strings from the file with scanner and read method, 
+ * use Movie class to save informations as movie titles and years alphabetically
+ * by binary search tree, use Node class as linked array to get access of things like 
+ * left and right so I can save and get the information as title in the order I want,
+ * I planned to save the sorted linkedarray into one String, so I can use substring
+ * and use the giving titles as start and end to find out the subset.
+ * What it does:
+ * I successfully read the file in, parse it into smaller pieces,
+ * created demo class, Movie class, and Node class, prints out the output
+ * by using binary search tree.
+ * What's the problems:
+ * I mess up with binary search tree with my Movie class and Node class,
+ * I can't figure out how to save the sorted list into array or other forms,
+ * tested with different methods but all failed, and I can't find lecture
+ * about this problem. Because I'm stuck in the middle of process, I do not
+ * finish my subset method.
+ * Can you please show me the successful program that meets the requirements?
+ * thank you
+ */
+
+//imports
+import java.util.*;
+import java.io.*;
+class Assign3{
+  /*  
+ * Main class that has main method,I tried to use it as demo; it calls all of other classes,
+ * scans a file, parses the strings, prints out the Strings from the file and prints out the sorted movie tiles
+ */
+  public static void main(String[] args) throws Exception{
+    //my pc can only read "C:\\Users\\owner\\Desktop\\Java Source\\movies.csv", I'm not sure if "movies.csv" works
+    File test = new File("movies.csv");
+    Scanner sc = new Scanner(test);
+    String[] list = new String[31];
+    read(sc, list);
+    String[] l = new String[3];
+    l = list[1].split(",");
+    Movie movies = new Movie(l[1]);
+    for(int i = 1; i<31; i++){
+      System.out.println(list[i]);
+      String[] s = new String[3];
+      s = list[i].split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)",-1);
+      movies.insert(movies.node, s[1]);
+    }
+    movies.inOrder(movies.node);
+    System.out.println(movies.getTitle());
+  }
+  //read the file in by scanner and while loop
+  public static void read(Scanner sc, String[] list){
+    int line = 0;
+    while(sc.hasNext()&&line<31){
+      list[line] = sc.nextLine();
+      line++;
+    }
+  }
+}
+//node class messed up with Movie class, I think I missed something
+//in this class but didn't figure out
+class Node{
+  String key;
+  Node left;
+  Node right;
+  Node(String key){
+      this.key = key;
+      left = null;
+      right = null;        
+  }
+}
+// class that use binary search tree to sort strings but cannot
+// figure out how to save the sorted strings in order
+class Movie{
+  private String title;
+  private int releaseYear;
+  private String[] genres;
+  private int movieId;
+  Node node;
+  //constructor
+  Movie(String key){
+    title = null;
+    releaseYear = 0;
+    node = new Node(key);
+  }
+  // method that I tried to save informations as titles
+  // but it failed
+  public void insertR(String str){
+   String[] list = new String[3];
+   list = str.split(",");
+   movieId = Integer.parseInt(list[0]);
+   genres = list[2].split("|");
+   
+  }
+  // return current title
+  public String getTitle(){
+    return title;
+  }
+  // try to use binary search tree to sort titles, it compares
+  // strings and move to left node or right node
+  public Node insert(Node node, String key){
+    if(node == null){
+      return new Node(key);
+    } 
+    // Move to the left if passed value is 
+    // less than the current node
+    if(key.compareTo(node.key)<0){
+      node.left = insert(node.left, key);
+    }
+    // Move to the right if passed value is 
+    // greater than the current node
+    else if(key.compareTo(node.key)>0){
+      node.right = insert(node.right, key);
+    }
+    return node;
+  }  
+  // For traversing in order
+  // prints out strings in alphabetical order
+  public void inOrder(Node node){
+    if(node != null){
+      inOrder(node.left);
+      System.out.println(node.key);
+      title = (node.key).substring(0, (node.key).lastIndexOf("("));
+      releaseYear = Integer.parseInt((node.key).substring((node.key).lastIndexOf("(")+1, (node.key).lastIndexOf(")")));
+      System.out.println(title + " " + releaseYear);
+      inOrder(node.right);
+    }
+  }
+}
+class MovieBST {
+  private Movie first;
+
+  public void subSet(String start, String end){
+    // Selects movie titles that fall alphabetically between start and end.
+    // I planned to save the sorted linkedarray into one String, so I can use substring
+    // and use the giving titles as start and end to find out the subset.
+    // Because I'm stuck in the middle of process, I can't do my subset method.
+  }
+}
+/* Output:
+ * > run Assign3
+1,Toy Story (1995),Adventure|Animation|Children|Comedy|Fantasy, 
+2,Jumanji (1995),Adventure|Children|Fantasy, 
+3,Grumpier Old Men (1995),Comedy|Romance, 
+4,Waiting to Exhale (1995),Comedy|Drama|Romance, 
+5,Father of the Bride Part II (1995),Comedy, 
+6,Heat (1995),Action|Crime|Thriller, 
+7,Sabrina (1995),Comedy|Romance, 
+8,Tom and Huck (1995),Adventure|Children, 
+9,Sudden Death (1995),Action, 
+10,GoldenEye (1995),Action|Adventure|Thriller, 
+11,"American President, The (1995)",Comedy|Drama|Romance, 
+12,Dracula: Dead and Loving It (1995),Comedy|Horror, 
+13,Balto (1995),Adventure|Animation|Children, 
+14,Nixon (1995),Drama, 
+15,Cutthroat Island (1995),Action|Adventure|Romance, 
+16,Casino (1995),Crime|Drama, 
+17,Sense and Sensibility (1995),Drama|Romance, 
+18,Four Rooms (1995),Comedy, 
+19,Ace Ventura: When Nature Calls (1995),Comedy, 
+20,Money Train (1995),Action|Comedy|Crime|Drama|Thriller, 
+21,Get Shorty (1995),Comedy|Crime|Thriller, 
+22,Copycat (1995),Crime|Drama|Horror|Mystery|Thriller, 
+23,Assassins (1995),Action|Crime|Thriller, 
+24,Powder (1995),Drama|Sci-Fi, 
+25,Leaving Las Vegas (1995),Drama|Romance, 
+26,Othello (1995),Drama, 
+27,Now and Then (1995),Children|Drama, 
+28,Persuasion (1995),Drama|Romance, 
+29,"City of Lost Children, The (Cit茅 des enfants perdus, La) (1995)",Adventure|Drama|Fantasy|Mystery|Sci-Fi, 
+30,Shanghai Triad (Yao a yao yao dao waipo qiao) (1995),Crime|Drama, 
+"American President, The (1995)" 
+"American President, The  1995 
+"City of Lost Children, The (Cit茅 des enfants perdus, La) (1995)" 
+"City of Lost Children, The (Cit茅 des enfants perdus, La)  1995 
+Ace Ventura: When Nature Calls (1995) 
+Ace Ventura: When Nature Calls  1995 
+Assassins (1995) 
+Assassins  1995 
+Balto (1995) 
+Balto  1995 
+Casino (1995) 
+Casino  1995 
+Copycat (1995) 
+Copycat  1995 
+Cutthroat Island (1995) 
+Cutthroat Island  1995 
+Dracula: Dead and Loving It (1995) 
+Dracula: Dead and Loving It  1995 
+Father of the Bride Part II (1995) 
+Father of the Bride Part II  1995 
+Four Rooms (1995) 
+Four Rooms  1995 
+Get Shorty (1995) 
+Get Shorty  1995 
+GoldenEye (1995) 
+GoldenEye  1995 
+Grumpier Old Men (1995) 
+Grumpier Old Men  1995 
+Heat (1995) 
+Heat  1995 
+Jumanji (1995) 
+Jumanji  1995 
+Leaving Las Vegas (1995) 
+Leaving Las Vegas  1995 
+Money Train (1995) 
+Money Train  1995 
+Nixon (1995) 
+Nixon  1995 
+Now and Then (1995) 
+Now and Then  1995 
+Othello (1995) 
+Othello  1995 
+Persuasion (1995) 
+Persuasion  1995 
+Powder (1995) 
+Powder  1995 
+Sabrina (1995) 
+Sabrina  1995 
+Sense and Sensibility (1995) 
+Sense and Sensibility  1995 
+Shanghai Triad (Yao a yao yao dao waipo qiao) (1995) 
+Shanghai Triad (Yao a yao yao dao waipo qiao)  1995 
+Sudden Death (1995) 
+Sudden Death  1995 
+Tom and Huck (1995) 
+Tom and Huck  1995 
+Toy Story (1995) 
+Toy Story  1995 
+Waiting to Exhale (1995) 
+Waiting to Exhale  1995 
+Waiting to Exhale 
+ */
