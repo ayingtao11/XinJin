@@ -1,0 +1,342 @@
+/* Class: CISC 3130
+ * Section: TY2
+ * EmplId: 23825107
+ * Name: XinJin Weng
+ */
+ 
+/*  Description
+ * This is assignment 4
+ * My drJava in my pc still cannot read file directly, it shows:
+ * java.io.FileNotFoundException: regional-global-weekly-2020-02-07--2020-02-14 (The system cannot find the file specified)
+ * But I tried it with different address that does work in my pc and changed it back to "movies.csv".
+ * since it's either there's no much need for separating the work into multiple methods except quicksort or I don't know
+ * how to put them into separating methods, I write most part of my program in the main method.
+ * Counting the number of movies of each genre in each year is so complicated that I don't know how to simplify it.
+ * 
+ * Main method scans in the file, parses the String by comma into array, counts the number of movies in each genre,
+ * finds out the average number of movies per genre, calls the quicksort method, prints out the number of movie of each genre in descending order,
+ * splits the arrays that are less or greater than the average into 2 arrays, counts the number of movies in each genre for the most recent 5 years,
+ * adds the year to the array of the genre everytime the movie has the genre in the year,and prints out adventure genre and the years between 1993 and 1997 for example
+ */
+
+//imports
+import java.util.*;
+import java.io.*;
+class assign4{
+  public static void main(String[] args) throws Exception{
+    //because of my or drjava or pc's problem, I can't use the same file address as others
+    //my program cannot read the file directly, so I'm not sure it is the correct file name
+    File f = new File("movies.csv");
+    Scanner sc = new Scanner(f);
+    //int num = count(f);
+    //this method can count how many lines are in the file, however my pc can't read them all
+    //so I only read in first 101 lines
+    String[][] line = new String[101][3];
+    //read in and parse the String by comma into array
+    for(int i=0;i<101;i++)
+      line[i] = sc.nextLine().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)",-1);
+    //parse out the year and genre into different arrays
+    String[] year = new String[100];
+    String[] genre = new String[100];
+    for(int i=0;i<100;i++){
+      year[i] = line[i+1][1].substring(line[i+1][1].lastIndexOf("(")+1,line[i+1][1].lastIndexOf(")"));
+      genre[i] = line[i+1][2];
+    }
+    
+    //count the number of movies in each genre
+    int adventure=0,animation=0,children=0,comedy=0,fantasy=0,romance=0,drama=0,thriller=0,action=0,horror=0,crime=0,mystery=0,scifi=0,war=0,documentary=0,musical=0,imax=0,filmnoir=0;
+    for(int i=0;i<100;i++){
+    if (genre[i].indexOf("Adventure") != -1)
+        adventure++;
+    if (genre[i].indexOf("Animation") != -1)
+        animation++;
+    if (genre[i].indexOf("Children") != -1)
+        children++;
+    if (genre[i].indexOf("Comedy") != -1)
+        comedy++;
+    if (genre[i].indexOf("Fantasy") != -1)
+        fantasy++;
+    if (genre[i].indexOf("Romance") != -1)
+        romance++;
+    if (genre[i].indexOf("Drama") != -1)
+        drama++;
+    if (genre[i].indexOf("Thriller") != -1)
+        thriller++;
+    if (genre[i].indexOf("Action") != -1)
+        action++;
+    if (genre[i].indexOf("Horror") != -1)
+        horror++;
+    if (genre[i].indexOf("Crime") != -1)
+        crime++;
+    if (genre[i].indexOf("Mystery") != -1)
+        mystery++;
+    if (genre[i].indexOf("Sci-Fi") != -1)
+        scifi++;
+    if (genre[i].indexOf("War") != -1)
+        war++;
+    if (genre[i].indexOf("Documentary") != -1)
+        documentary++;
+    if (genre[i].indexOf("Musical") != -1)
+        musical++;
+    if (genre[i].indexOf("IMAX") != -1)
+        imax++;
+    if (genre[i].indexOf("Film-Noir") != -1)
+        filmnoir++;
+    }
+    
+    //find out the average number of movies per genre
+    double average=(adventure+animation+children+comedy+fantasy+romance+drama+thriller+action+horror+crime+mystery+scifi+war+documentary+musical+imax+filmnoir)*1.0/18;
+    System.out.println("Average number of movies per genre is: " + average);
+    //store the genre name and the number of movies in each genre in two different arrays
+    String[] gName = {"adventure","animation","children","comedy","fantasy","romance","drama","thriller","action","horror","crime","mystery","scifi","war","documentary","musical","imax","filmnoir"};
+    int[] gNum = {adventure,animation,children,comedy,fantasy,romance,drama,thriller,action,horror,crime,mystery,scifi,war,documentary,musical,imax,filmnoir};
+    //calling quicksort
+    quicksort(gName,gNum,0,17);
+    //prints out the number of movie of each genre in descending order
+    for(int i=0;i<18;i++)
+    System.out.println(gNum[i] + " movies are in " + gName[i]);
+    
+    //splits the arrays that are less or greater than the average into 2 arrays
+    List<String> lessS = new ArrayList<String>();
+    List<Integer> lessI = new ArrayList<Integer>();
+    List<String> greaterS = new ArrayList<String>();
+    List<Integer> greaterI = new ArrayList<Integer>();
+    for(int i=0;i<18;i++){
+      if(gNum[i]<average){
+        lessS.add(gName[i]);
+        lessI.add(gNum[i]);
+      }
+      if(gNum[i]>average){
+        greaterS.add(gName[i]);
+        greaterI.add(gNum[i]);
+      }
+    }
+    
+    System.out.println();
+    
+    //count the number of movies in each genre for the most recent 5 years
+    //the if statements are different from the first one, so I don't know if I can make them to into one method and call it twice.
+    int adventure2=0,animation2=0,children2=0,comedy2=0,fantasy2=0,romance2=0,drama2=0,thriller2=0,action2=0,horror2=0,crime2=0,mystery2=0,scifi2=0,war2=0,documentary2=0,musical2=0,imax2=0,filmnoir2=0;
+    for(int i=0;i<100;i++){
+      boolean recent = year[i].equals("2015")||year[i].equals("2016")||year[i].equals("2017")||year[i].equals("2018")||year[i].equals("2019")||year[i].equals("2020");
+    if (recent&&genre[i].indexOf("Adventure") != -1)
+        adventure2++;
+    if (recent&&genre[i].indexOf("Animation") != -1)
+        animation2++;
+    if (recent&&genre[i].indexOf("Children") != -1)
+        children2++;
+    if (recent&&genre[i].indexOf("Comedy") != -1)
+        comedy2++;
+    if (recent&&genre[i].indexOf("Fantasy") != -1)
+        fantasy2++;
+    if (recent&&genre[i].indexOf("Romance") != -1)
+        romance2++;
+    if (recent&&genre[i].indexOf("Drama") != -1)
+        drama2++;
+    if (recent&&genre[i].indexOf("Thriller") != -1)
+        thriller2++;
+    if (recent&&genre[i].indexOf("Action") != -1)
+        action2++;
+    if (recent&&genre[i].indexOf("Horror") != -1)
+        horror2++;
+    if (recent&&genre[i].indexOf("Crime") != -1)
+        crime2++;
+    if (recent&&genre[i].indexOf("Mystery") != -1)
+        mystery2++;
+    if (recent&&genre[i].indexOf("Sci-Fi") != -1)
+        scifi2++;
+    if (recent&&genre[i].indexOf("War") != -1)
+        war2++;
+    if (recent&&genre[i].indexOf("Documentary") != -1)
+        documentary2++;
+    if (recent&&genre[i].indexOf("Musical") != -1)
+        musical2++;
+    if (recent&&genre[i].indexOf("IMAX") != -1)
+        imax2++;
+    if (recent&&genre[i].indexOf("Film-Noir") != -1)
+        filmnoir2++;
+    }
+    //store the genre name and the number of movies in each genre in the most recent 5 years in two different arrays
+    String[] gName2 = {"adventure","animation","children","comedy","fantasy","romance","drama","thriller","action","horror","crime","mystery","scifi","war","documentary","musical","imax","filmnoir"};
+    int[] gNum2 = {adventure2,animation2,children2,comedy2,fantasy2,romance2,drama2,thriller2,action2,horror2,crime2,mystery2,scifi2,war2,documentary2,musical2,imax2,filmnoir2};
+    //calling quicksort
+    quicksort(gName2,gNum2,0,17);
+    //prints out the number of movie of each genre in the most recent 5 years in descending order
+    for(int i=0;i<18;i++)
+    System.out.println(gNum2[i] + " movies are in " + gName2[i] + " in the most recent 5 years");
+    
+    System.out.println();
+    
+    //create an array for each genre
+    List<String> adventureL = new ArrayList<String>();
+    List<String> animationL = new ArrayList<String>();
+    List<String> childrenL = new ArrayList<String>();
+    List<String> comedyL = new ArrayList<String>();
+    List<String> fantasyL = new ArrayList<String>();
+    List<String> romanceL = new ArrayList<String>();
+    List<String> dramaL = new ArrayList<String>();
+    List<String> thrillerL = new ArrayList<String>();
+    List<String> actionL = new ArrayList<String>();
+    List<String> horrorL = new ArrayList<String>();
+    List<String> crimeL = new ArrayList<String>();
+    List<String> mysteryL = new ArrayList<String>();
+    List<String> scifiL = new ArrayList<String>();
+    List<String> warL = new ArrayList<String>();
+    List<String> documentaryL = new ArrayList<String>();
+    List<String> musicalL = new ArrayList<String>();
+    List<String> imaxL = new ArrayList<String>();
+    List<String> filmnoirL = new ArrayList<String>();
+    //add the year to the array of the genre everytime the movie has the genre in the year
+    for(int i=0;i<100;i++){
+    if (genre[i].indexOf("Adventure") != -1)
+        adventureL.add(year[i]);
+    if (genre[i].indexOf("Animation") != -1)
+        animationL.add(year[i]);
+    if (genre[i].indexOf("Children") != -1)
+        childrenL.add(year[i]);
+    if (genre[i].indexOf("Comedy") != -1)
+        comedyL.add(year[i]);
+    if (genre[i].indexOf("Fantasy") != -1)
+        fantasyL.add(year[i]);
+    if (genre[i].indexOf("Romance") != -1)
+        romanceL.add(year[i]);
+    if (genre[i].indexOf("Drama") != -1)
+        dramaL.add(year[i]);
+    if (genre[i].indexOf("Thriller") != -1)
+        thrillerL.add(year[i]);
+    if (genre[i].indexOf("Action") != -1)
+        actionL.add(year[i]);
+    if (genre[i].indexOf("Horror") != -1)
+        horrorL.add(year[i]);
+    if (genre[i].indexOf("Crime") != -1)
+        crimeL.add(year[i]);
+    if (genre[i].indexOf("Mystery") != -1)
+        mysteryL.add(year[i]);
+    if (genre[i].indexOf("Sci-Fi") != -1)
+        scifiL.add(year[i]);
+    if (genre[i].indexOf("War") != -1)
+        warL.add(year[i]);
+    if (genre[i].indexOf("Documentary") != -1)
+        documentaryL.add(year[i]);
+    if (genre[i].indexOf("Musical") != -1)
+        musicalL.add(year[i]);
+    if (genre[i].indexOf("IMAX") != -1)
+        imaxL.add(year[i]);
+    if (genre[i].indexOf("Film-Noir") != -1)
+        filmnoirL.add(year[i]);
+    }
+    //I think the question asks: How many movies of each genre came out each year?
+    //since there are so many genres and years, I only use the genre, adventure, and the years between 1993 and 1997 for example
+    int yr1993=0,yr1994=0,yr1995=0,yr1996=0,yr1997=0;
+    for(int i=0;i<adventureL.size();i++){
+      if(adventureL.get(i).equals("1993"))
+        yr1993++;
+      if(adventureL.get(i).equals("1994"))
+        yr1994++;
+      if(adventureL.get(i).equals("1995"))
+        yr1995++;
+      if(adventureL.get(i).equals("1996"))
+        yr1996++;
+      if(adventureL.get(i).equals("1997"))
+        yr1997++;
+    }
+    //prints out adventure genre and the years between 1993 and 1997 for example
+    System.out.println("Since there are so many genres and years, I only use the genre, adventure, and the years between 1993 and 1997 for example");
+    System.out.println("There are " + yr1993 + " movies of adventure genre in 1993");
+    System.out.println("There are " + yr1994 + " movies of adventure genre in 1994");
+    System.out.println("There are " + yr1995 + " movies of adventure genre in 1995");
+    System.out.println("There are " + yr1996 + " movies of adventure genre in 1996");
+    System.out.println("There are " + yr1997 + " movies of adventure genre in 1997");
+  }
+  
+  //this method can count how many lines are in the file, however my pc can't read them all
+  public static int count(File f)throws Exception{
+    Scanner in = new Scanner(f);
+    int num = 0;
+    while(in.hasNext()){ num++; }
+    return num;
+  }
+  
+  //quicksort method, resursively calls partition method and quicksort method itself
+  public static void quicksort(String[] n, int arr[], int left, int right){
+    if(left < right){
+      int q = partition(n, arr, left, right);
+      quicksort(n, arr, left, q);
+      quicksort(n, arr, q + 1, right);
+    }
+  }
+  
+  //partition method for quicksort,help to sort in descending order with parallel arrays
+  public static int partition(String[] n, int arr[], int left, int right){
+    int pivot = arr[left];
+    String p = n[left];
+    int i = left;
+    for(int j = left + 1; j <= right; j++){
+      if (arr[j] > pivot){
+        i = i + 1;
+        int temp = arr[i];
+        String t = n[i];
+        arr[i]= arr[j];
+        n[i]=n[j];
+        arr[j]= temp;
+        n[j]=t;
+      }
+    }
+    int temp = arr[i];
+    String t = n[i];
+    arr[i] = arr[left];
+    n[i] = n[left];
+    arr[left] = temp;
+    n[left] = t;
+    
+    return i;
+  }
+}
+
+/*  Output:
+Average number of movies per genre is: 12.88888888888889 
+53 movies are in drama 
+37 movies are in comedy 
+24 movies are in romance 
+22 movies are in thriller 
+18 movies are in action 
+17 movies are in crime 
+15 movies are in adventure 
+13 movies are in children 
+6 movies are in scifi 
+6 movies are in mystery 
+5 movies are in fantasy 
+5 movies are in horror 
+3 movies are in animation 
+3 movies are in war 
+3 movies are in documentary 
+2 movies are in musical 
+0 movies are in imax 
+0 movies are in filmnoir 
+ 
+0 movies are in adventure in the most recent 5 years 
+0 movies are in animation in the most recent 5 years 
+0 movies are in children in the most recent 5 years 
+0 movies are in comedy in the most recent 5 years 
+0 movies are in fantasy in the most recent 5 years 
+0 movies are in romance in the most recent 5 years 
+0 movies are in drama in the most recent 5 years 
+0 movies are in thriller in the most recent 5 years 
+0 movies are in action in the most recent 5 years 
+0 movies are in horror in the most recent 5 years 
+0 movies are in crime in the most recent 5 years 
+0 movies are in mystery in the most recent 5 years 
+0 movies are in scifi in the most recent 5 years 
+0 movies are in war in the most recent 5 years 
+0 movies are in documentary in the most recent 5 years 
+0 movies are in musical in the most recent 5 years 
+0 movies are in imax in the most recent 5 years 
+0 movies are in filmnoir in the most recent 5 years 
+
+Since there are so many genres and years, I only use the genre, adventure, and the years between 1993 and 1997 for example 
+There are 0 movies of adventure genre in 1993 
+There are 1 movies of adventure genre in 1994 
+There are 10 movies of adventure genre in 1995 
+There are 4 movies of adventure genre in 1996 
+There are 0 movies of adventure genre in 1997 
+> */
